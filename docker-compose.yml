@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/study_assistant
+      - REDIS_URL=redis://redis:6379
+      - FIREBASE_CONFIG=${FIREBASE_CONFIG}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - NAPKIN_API_KEY=${NAPKIN_API_KEY}
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - postgres
+      - redis
+      - pgvector
+
+  ocr-service:
+    build: ./services/ocr-service
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./services/ocr-service:/app
+
+  chart-ocr-service:
+    build: ./services/chart-ocr-service
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./services/chart-ocr-service:/app
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  postgres:
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=study_assistant
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgvector:
+    image: ankane/pgvector:latest
+    environment:
+      - POSTGRES_USER=vector_user
+      - POSTGRES_PASSWORD=vector_password
+      - POSTGRES_DB=vector_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgvector_data:/var/lib/postgresql/data
+
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    command: serve
+
+volumes:
+  redis_data:
+  postgres_data:
+  pgvector_data:
+  ollama_data:
