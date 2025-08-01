@@ -1,46 +1,38 @@
-# EJUST Study Assistant
+# EJUST Study Assistant - Proof of Concept
 
-A graph-savvy study assistant that transforms user-uploaded notes (handwritten pages, PDFs, photos) into a chat-first knowledge base.
+A simple working prototype that transforms uploaded notes into a chat-enabled knowledge base with figure regeneration.
 
-## Features
+## What It Does
 
-1. **Answer questions** with citations (RAG)
-2. **Re-draw figures/graphs** in a clean, branded style via Napkin
-3. **Export** regenerated notes as DOCX/PDF
+1. **Upload** - Drag & drop PDFs or images
+2. **Chat** - Ask questions about your notes
+3. **Regenerate** - Create clean versions of diagrams
+4. **Export** - Download improved notes
 
-## Architecture
-
-- **Frontend**: React 19 + Vite 5 + Tailwind 3
-- **Backend**: FastAPI with WebSocket support
-- **OCR**: PaddleOCR ultra-lite + ChartOCR
-- **Vector DB**: pgvector or Qdrant
-- **LLM**: GPT-4o / Llama-3-8B
-- **Task Queue**: Redis + RQ
-- **Auth**: Firebase Auth
-
-## Project Structure
+## Simple Project Structure
 
 ```
-├── frontend/               # React SPA
+ejust-study-assistant/
+├── frontend/          # React app
 │   ├── src/
-│   │   ├── components/    # UI components
-│   │   ├── hooks/        # Custom React hooks
-│   │   ├── services/     # API services
-│   │   └── utils/        # Utilities
-│   └── tests/
-├── backend/               # FastAPI application
-│   ├── api/              # API endpoints
-│   ├── services/         # Business logic
-│   ├── core/             # Core functionality
-│   └── tests/
-├── services/             # Microservices
-│   ├── ocr-service/      # OCR processing
-│   └── chart-ocr-service/# Chart recognition
-├── infrastructure/       # Deployment configs
-├── shared/              # Shared types/utils
-└── docs/                # Documentation
+│   │   ├── components/   # UI components
+│   │   └── services/     # API calls
+│   └── public/
+├── backend/           # Python FastAPI server
+│   ├── main.py          # Main server file
+│   ├── ocr.py           # OCR processing
+│   ├── chat.py          # Chat functionality
+│   ├── uploads/         # Uploaded files
+│   └── outputs/         # Generated files
+├── docker-compose.yml    # Run everything with one command
+└── README.md            # You are here!
 ```
 
-## Getting Started
+## Quick Start
 
-See [docs/deployment/local-setup.md](docs/deployment/local-setup.md) for development setup instructions.
+1. Clone the repo
+2. Add your API keys to `.env`
+3. Run `docker-compose up`
+4. Open http://localhost:3000
+
+That's it! 🚀
